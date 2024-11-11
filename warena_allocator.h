@@ -20,7 +20,7 @@ warena_allocator warena_create() {
 }
 void* warena_allocate(warena_allocator* arena, size_t bytes) {
     void* result = (void*)&arena->data[arena->currentIndex];
-    arena->currentIndex += (bytes / sizeof(max_align_t)) - (bytes % sizeof(max_align_t) == 0 ? 1 : 0);
+    arena->currentIndex += (bytes / sizeof(max_align_t)) + (bytes % sizeof(max_align_t) == 0 ? 0 : 1);
     return result;
 }
 void warena_destroy(warena_allocator* arena) {

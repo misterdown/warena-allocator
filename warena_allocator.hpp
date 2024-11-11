@@ -25,9 +25,12 @@ struct warena_allocator {
 
     typedef std::size_t size_type;
     typedef std::ptrdiff_t difference_type;
+    
+    private:
+    typedef typename std::aligned_storage<sizeof(value_type), alignof(value_type)>::type storage_t;
 
     private:
-    std::aligned_storage<sizeof(value_type), alignof(value_type)> data_[objCount];
+    storage_t data_[objCount];
     size_t currentIndex_; // NOT A SIZE OF DATA IN BYTES
 
     public:
@@ -62,11 +65,10 @@ struct warena_allocator {
     void deallocate(pointer ptr, size_type count) noexcept {
         if (((difference_type)ptr + (difference_type)count) == ((difference_type)data_ + (difference_type)currentIndex_)) {
             currentIndex_ -= count;
-            std::cout << "D";
         }
     }
     size_type max_size() const noexcept {
-        return objCount;
+        return objCount - currentIndex_;
     }
 
     public:
